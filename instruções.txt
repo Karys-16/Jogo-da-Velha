@@ -1,1 +1,6 @@
-Jogue
+INSTRUÇÃO:
+O primeiro jogador será considerado o jogador par e será X
+O segundo a jogar será considerado o jogador Ímpar e jogará com O
+Digite a linha e Coluna como o exemplo: 3 2 (Terceira linha, Segunda coluna)
+
+Após alguém vencer o programa será encerrado

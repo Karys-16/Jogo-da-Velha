@@ -1,19 +1,24 @@
-/* Karys Barbosa - sept - 2022*/
+/* Karys Barbosa 2022*/
 #include <stdio.h>
 #include <stdlib.h>
 
 
 //Protótipos das funções verificadoras
-int diag_ver(char player, int cur_position, int cur_positionY, char game[3][3]);
-int col_ver(char player, int cur_position, int cur_positionY, char game[3][3]);
-int row_ver(char player, int cur_position, int cur_positionY, char game[3][3]);
+int diagp_ver(char player, char game[3][3]);
+int diags_ver(char player, char game[3][3]);
+int col_ver(char player, int cur_positionX, int cur_positionY, char game[3][3]);
+int row_ver(char player, int cur_positionX, int cur_positionY, char game[3][3]);
 
 //Função principal
 int main()
 {
     //Variável de confirmação 
     int confirmacao;
-    int retd, retc, retl;
+    int retd, retc, retl, retds;
+    retd = 0;
+    retds = 0;
+    retl = 0;
+    retc = 0;
 
     //Variáveis para armazenar a linha e coluna escolhidas pelo usuário
     int linha, coluna;
@@ -58,15 +63,20 @@ int main()
                 scanf("%d %d", &linha, &coluna);   
             }
 
+            //Verifica se aquela posição ainda não foi mexida
             if(game[linha-1][coluna-1] == '-')
-            { //Verifica se aquela posição ainda não foi mexida
+            {
                 game[linha-1][coluna-1] = aux;
-                retd = diag_ver(aux, linha-1, coluna-1, game);
-                retc = col_ver(aux, linha-1, coluna-1, game);
-                retl = row_ver(aux, linha-1, coluna-1, game);
-                if(retd || retc || retl)
+                retd = diagp_ver(aux, game);
+                retds = diags_ver(aux, game);
+                retc = col_ver(aux, (coluna-1), (linha-1), game);
+                retl = row_ver(aux, (coluna-1), (linha-1), game);
+                if(retc == 3 || retl == 3 || retd == 3 || retds == 3)
                 {
-                    printf("O jogador %c venceu!", aux);
+                    printf("Jogador %c venceu!", aux);
+                    //Encerra o programa quando alguém vence
+                    return 0;
+                    // printf("Linha: %d Coluna: %d diagonal: %d", retl, retc, retd);
                 }
             }
 
@@ -83,58 +93,108 @@ int main()
 
 //Parâmetros:
 //Player - char que contem qual jogador jogou agora (X ou O)
-//cur_position - última posição jogada
+//cur_position - posição atual
 //game - matriz 3x3 do jogo
 
 
-//Função para a verificação da diagonal
-//Essa posição será chamada apenas quando o jogador não estiver nas posições [1][0] e [1][2] (não possuem diagonais)
-int diag_ver(char player, int cur_positionX, int cur_positionY, char game[3][3])
-{
-    int contP = 0;
-    int contS = 0;
-    //Diagonal principal
-    for(int i = 0; i < 3; i++)
-    {
-        for(int j = 0; j < 3; j++)
-        {
-            //Achando a diagonal principal'
-            if(j == i)
-            {
-                //Se o conteudo dessa diagonal for igual ao char do player o contador chega a 3
-                if(game[i][j] == player)
-                    contP++;
-            }
-        }
-    }   
-
-    //Diagonal secundária
-    for(int i = 0; i < 3; i++)
-    {
-        for(int j = 0; j < 3; j++)
-        {
-            if(j+i<2)
-            {
-                if(game[i][j] == player)
-                    contS++;
-            }
-        }
-    }
-
-    if(contP >= 3 || contS >= 3)
-    {
-        return 1;
-    }
-}
-
-//verifica a coluna
+// Verificação da coluna
 int col_ver(char player, int cur_positionX, int cur_positionY, char game[3][3])
 {
+    // printf("Posição Y: %d e Posição X: %d\n\n", cur_positionY, cur_positionX);
+    char p = game[cur_positionY][cur_positionX];
+    // printf("JOGADOR: %c\n", p);
 
+    int contcol = 0;
+    for(int i = 0; i < 3; i++)
+    {
+        if(p == game[i][cur_positionX])
+        {
+            contcol++;
+            // printf("Contador de coluna: %d\n", contcol);
+        }
+    }
+
+    if(contcol == 3)
+        return contcol;
+    else 
+        return 0;
 }
 
-//verifica a linha
+
+//verificando a linha
 int row_ver(char player, int cur_positionX, int cur_positionY, char game[3][3])
 {
+    char p = game[cur_positionY][cur_positionX];
+    // printf("JOGADOR: %c\n", p);
 
+    int contlin = 0;
+    for(int i = 0; i < 3; i++)
+    {
+        if(p == game[cur_positionY][i])
+        {
+            contlin++;
+            // printf("Contador de linha: %d\n", contlin);
+        }
+    }
+
+    if(contlin == 3)
+        return contlin;
+    else 
+        return 0;
 }
+
+//verificando a diagonal principal
+int diagp_ver(char player, char game[3][3])
+{
+    // printf("JOGADOR: %c\n", player);
+
+    int contd = 0;
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            if(j==i && game[i][j] == player && player!= '-')
+            {
+                contd++;
+                // printf("Contador da  diagonal: %d\n", contd);
+            }
+        }
+    }
+
+    if(contd == 3)
+        return contd;
+    else 
+        return 0;
+}
+
+//verificando a diagonal principal
+int diags_ver(char player, char game[3][3])
+{
+    // printf("JOGADOR: %c\n", player);
+    int contd = 0;
+    for(int i = 0; i < 3; i++)
+    {
+        for(int j = 0; j < 3; j++)
+        {
+            if((j+i) < 3 && game[i][j] == player && player!= '-')
+            {
+                contd++;
+                // printf("Contador da  diagonal secundária: %d\n", contd);
+            }
+        }
+    }
+
+    if(contd == 3)
+        return contd;
+    else 
+        return 0;
+}
+
+/*
+    Algoritmo desenvolvido com propósito de fixação  dos conteúdos apresentados na matéria de Construção de Algoritmos e Programação
+    modularização
+    matrizes
+    lógica
+
+    2022/1
+*/
